@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<!--
+  FICHIER : index.html
+  RÔLE    : Structure de la page web (le "squelette").
+            En HTML, on décrit le CONTENU et l'ORGANISATION
+            de la page. Les balises HTML sont des "étiquettes"
+            qui donnent du sens aux éléments.
+            
+  ORGANISATION DU PROJET :
+  ├── index.html  → Structure (ce fichier)
+  ├── style.css   → Apparence visuelle (couleurs, tailles...)
+  └── script.js   → Comportement et logique (calculs, animations...)
+-->
+<html lang="fr">
+<head>
+  <!-- Encodage des caractères : permet d'afficher les accents français -->
+  <meta charset="UTF-8">
+  
+  <!-- Affichage responsive : s'adapte aux mobiles et tablettes -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Titre affiché dans l'onglet du navigateur -->
+  <title>CryptoLink — Communication Sécurisée</title>
+  
+  <!--
+    Liaison avec le fichier CSS externe.
+    rel="stylesheet" = c'est une feuille de style
+    href="style.css" = chemin vers le fichier CSS
+    Le CSS doit être chargé AVANT le contenu pour éviter un flash de page non stylisée.
+  -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============================================================
+     EN-TÊTE DE LA PAGE (header)
+     Contient le logo et les badges des algorithmes utilisés.
+     ============================================================ -->
+<header>
+  <!-- Logo de l'application : "Crypto" en cyan + "Link" en orange -->
+  <div class="logo">Crypto<span>Link</span></div>
+  
+  <!-- Badges indiquant les algorithmes utilisés dans l'application -->
+  <div class="badges">
+    <span class="badge badge-aes">AES-256</span>
+    <span class="badge badge-rsa">RSA-2048</span>
+    <span class="badge badge-sha">SHA-256</span>
+  </div>
+</header>
+
+<!-- ============================================================
+     CONTENU PRINCIPAL (main)
+     Tout ce qui apparaît sous l'en-tête.
+     ============================================================ -->
+<main>
+
+  <!-- ====================================================
+       NAVIGATION PAR ONGLETS
+       Les 4 boutons permettant de naviguer entre les sections.
+       onclick="switchTab('...')" appelle la fonction JavaScript
+       correspondante quand on clique sur le bouton.
+       ==================================================== -->
+  <div class="tabs">
+    <!-- L'onglet actif par défaut a la classe CSS "active" -->
+    <button class="tab active" onclick="switchTab('main')"> Simulation principale</button>
+    <button class="tab" onclick="switchTab('classic')"> Cryptographie classique</button>
+    <button class="tab" onclick="switchTab('compare')"> Analyse &amp; Performances</button>
+    <button class="tab" onclick="switchTab('about')"> À propos</button>
+  </div>
+
+
+  <!-- ============================================================
+       ONGLET 1 : SIMULATION PRINCIPALE
+       Montre la communication sécurisée entre Adjoua et Koffi.
+       id="tab-main" permet à JavaScript d'identifier cet onglet.
+       ============================================================ -->
+  <div id="tab-main" class="tab-content active">
+
+    <div class="section-title">Simulation de Communication Sécurisée</div>
+    <p class="section-sub">Adjoua envoie un message sécurisé à Koffi · AES + RSA + SHA-256 + Signature numérique</p>
+
+    <!-- Disposition en 2 colonnes : Adjoua à gauche, Koffi à droite -->
+    <div class="two-col">
+
+      <!-- ==========================================
+           COLONNE GAUCHE : ADJOUA (expéditrice)
+           ========================================== -->
+      <div>
+
+        <!-- Panneau de saisie du message -->
+        <div class="panel">
+          <div class="panel-title adjoua-title">Adjoua — Expéditrice</div>
+
+          <!-- Champ de saisie du message à envoyer -->
+          <div class="field">
+            <label>Message à envoyer</label>
+            <textarea id="msg-input" placeholder="Écrivez votre message secret ici…">Bonjour Koffi, voici notre plan confidentiel pour demain à 14h00. Ne le divulguez à personne !</textarea>
+          </div>
+
+          <!-- Champ pour la clé secrète AES -->
+          <div class="field">
+            <label>Clé secrète AES (partagée)</label>
+            <!-- Cette clé doit être connue des deux parties (Adjoua ET Koffi) -->
+            <input type="text" id="aes-key-input" value="Adjoua&amp;Koffi2024!" />
+          </div>
+
+          <!-- Case à cocher pour simuler une attaque d'un pirate -->
+          <div class="attack-toggle">
+            <input type="checkbox" id="attack-mode" />
+            <label style="margin:0;text-transform:none;letter-spacing:0;color:var(--danger);">
+               Simuler une attaque (message intercepté et modifié)
+            </label>
+          </div>
+
+          <!-- Bouton qui déclenche la fonction sendMessage() dans script.js -->
+          <button class="btn btn-primary" onclick="sendMessage()" id="btn-send">
+            ▶ Chiffrer &amp; Envoyer
+          </button>
+        </div>
+
+        <!-- Espace entre les panneaux -->
+        <div class="separator"></div>
+
+        <!-- Panneau d'animation du pipeline d'envoi -->
+        <div class="panel">
+          <div class="panel-title adjoua-title">Pipeline d'envoi</div>
+          
+          <!-- Conteneur du pipeline : JavaScript animera ces étapes -->
+          <div class="pipeline" id="send-pipeline">
+
+            <!-- Étape 1 : Hachage SHA-256 -->
+            <!-- data-step="0" = index de l'étape (utilisé par JavaScript) -->
+            <div class="pipeline-step" data-step="0">
+              <div class="step-num">1</div>
+              <div class="step-info">
+                <div class="step-name">Hachage SHA-256</div>
+                <div class="step-desc">Génération de l'empreinte du message</div>
+              </div>
+              <span class="step-tag" style="border-color:var(--accent3);color:var(--accent3)">Intégrité</span>
+            </div>
+
+            <!-- Étape 2 : Signature numérique RSA -->
+            <div class="pipeline-step" data-step="1">
+              <div class="step-num">2</div>
+              <div class="step-info">
+                <div class="step-name">Signature RSA</div>
+                <div class="step-desc">Adjoua signe avec sa clé privée</div>
+              </div>
+              <span class="step-tag" style="border-color:var(--accent2);color:var(--accent2)">Authenticité</span>
+            </div>
+
+            <!-- Étape 3 : Chiffrement du message avec AES -->
+            <div class="pipeline-step" data-step="2">
+              <div class="step-num">3</div>
+              <div class="step-info">
+                <div class="step-name">Chiffrement AES-256</div>
+                <div class="step-desc">Chiffrement du message en mode CBC</div>
+              </div>
+              <span class="step-tag" style="border-color:var(--accent);color:var(--accent)">Confidentialité</span>
+            </div>
+
+            <!-- Étape 4 : Chiffrement de la clé AES avec RSA -->
+            <div class="pipeline-step" data-step="3">
+              <div class="step-num">4</div>
+              <div class="step-info">
+                <div class="step-name">Chiffrement RSA de la clé</div>
+                <div class="step-desc">Protection de la clé AES</div>
+              </div>
+              <span class="step-tag" style="border-color:var(--accent2);color:var(--accent2)">Échange sécurisé</span>
+            </div>
+
+            <!-- Étape 5 : Envoi du paquet à Koffi -->
+            <div class="pipeline-step" data-step="4">
+              <div class="step-num">5</div>
+              <div class="step-info">
+                <div class="step-name">Transmission</div>
+                <div class="step-desc">Envoi du paquet chiffré à Koffi</div>
+              </div>
+              <span class="step-tag" style="border-color:var(--dim);color:var(--dim)">Réseau</span>
+            </div>
+
+          </div><!-- fin #send-pipeline -->
+        </div><!-- fin panel pipeline envoi -->
+
+        <div class="separator"></div>
+
+        <!-- Panneau affichant les données chiffrées visibles "en transit" -->
+        <div class="panel">
+          <div class="panel-title adjoua-title">Données chiffrées (en transit)</div>
+
+          <!-- Message chiffré par AES (illisible sans la clé) -->
+          <div class="field">
+            <label>Message chiffré (AES)</label>
+            <!-- La classe "empty" est supprimée par JS quand des données arrivent -->
+            <div class="code-block empty" id="out-ciphertext">En attente d'envoi…</div>
+          </div>
+
+          <!-- Empreinte SHA-256 du message original -->
+          <div class="field">
+            <label>Hash SHA-256 du message original</label>
+            <div class="code-block empty" id="out-hash">—</div>
+          </div>
+
+          <!-- Signature numérique d'Adjoua -->
+          <div class="field">
+            <label>Signature numérique (simulée)</label>
+            <div class="code-block empty" id="out-sig">—</div>
+          </div>
+
+          <!-- Clé AES protégée par RSA -->
+          <div class="field">
+            <label>Clé AES chiffrée (RSA)</label>
+            <div class="code-block empty" id="out-enckey">—</div>
+          </div>
+        </div><!-- fin panel données chiffrées -->
+
+      </div><!-- fin colonne Adjoua -->
+
+
+      <!-- ==========================================
+           COLONNE DROITE : KOFFI (destinataire)
+           ========================================== -->
+      <div>
+
+        <!-- Panneau de déchiffrement de Koffi -->
+        <div class="panel">
+          <div class="panel-title koffi-title">Koffi — Destinataire</div>
+
+          <!-- Koffi doit entrer la même clé AES qu'Adjoua -->
+          <div class="field">
+            <label>Clé AES connue de Koffi</label>
+            <input type="text" id="aes-key-koffi" value="Adjoua&amp;Koffi2024!" />
+          </div>
+
+          <!-- Bouton désactivé au départ, activé quand Adjoua a envoyé un message -->
+          <!-- disabled = le bouton ne répond pas aux clics -->
+          <button class="btn btn-success" onclick="receiveMessage()" id="btn-recv" disabled>
+            ▶ Déchiffrer &amp; Vérifier
+          </button>
+        </div>
+
+        <div class="separator"></div>
+
+        <!-- Panneau d'animation du pipeline de réception -->
+        <div class="panel">
+          <div class="panel-title koffi-title">Pipeline de réception</div>
+          <div class="pipeline" id="recv-pipeline">
+
+            <!-- Étape 1 : Récupération de la clé AES via RSA -->
+            <div class="pipeline-step" data-step="0">
+              <div class="step-num">1</div>
+              <div class="step-info">
+                <div class="step-name">Déchiffrement RSA</div>
+                <div class="step-desc">Récupération de la clé AES</div>
+              </div>
+              <span class="step-tag" style="border-color:var(--accent2);color:var(--accent2)">RSA</span>
+            </div>
+
+            <!-- Étape 2 : Déchiffrement du message avec AES -->
+            <div class="pipeline-step" data-step="1">
+              <div class="step-num">2</div>
+              <div class="step-info">
+                <div class="step-name">Déchiffrement AES</div>
+                <div class="step-desc">Révélation du message en clair</div>
+              </div>
+              <span class="step-tag" style="border-color:var(--accent);color:var(--accent)">AES</span>
+            </div>
+
+            <!-- Étape 3 : Vérification de la signature d'Adjoua -->
+            <div class="pipeline-step" data-step="2">
+              <div class="step-num">3</div>
+              <div class="step-info">
+                <div class="step-name">Vérification signature</div>
+                <div class="step-desc">Authentification d'Adjoua</div>
+              </div>
+              <span class="step-tag" style="border-color:var(--accent2);color:var(--accent2)">Authenticité</span>
+            </div>
+
+            <!-- Étape 4 : Comparaison des hash SHA-256 -->
+            <div class="pipeline-step" data-step="3">
+              <div class="step-num">4</div>
+              <div class="step-info">
+                <div class="step-name">Vérification hash</div>
+                <div class="step-desc">Confirmation de l'intégrité</div>
+              </div>
+              <span class="step-tag" style="border-color:var(--accent3);color:var(--accent3)">SHA-256</span>
+            </div>
+
+            <!-- Étape 5 : Message validé et lisible -->
+            <div class="pipeline-step" data-step="4">
+              <div class="step-num">5</div>
+              <div class="step-info">
+                <div class="step-name">Message validé</div>
+                <div class="step-desc">Lecture du message déchiffré</div>
+              </div>
+              <span class="step-tag" style="border-color:var(--success);color:var(--success)">Validé</span>
+            </div>
+
+          </div><!-- fin #recv-pipeline -->
+        </div><!-- fin panel pipeline réception -->
+
+        <div class="separator"></div>
+
+        <!-- Panneau de résultat : JavaScript injectera ici le résultat (succès ou échec) -->
+        <div class="panel">
+          <div class="panel-title koffi-title">Résultat de réception</div>
+          <div id="recv-result">
+            <div style="color:var(--dim);font-size:0.75rem;padding:20px;text-align:center;">
+              Aucun message reçu. Attendez qu'Adjoua envoie un message.
+            </div>
+          </div>
+        </div>
+
+      </div><!-- fin colonne Koffi -->
+
+    </div><!-- fin two-col -->
+
+    <!-- Journal d'exécution : toutes les actions sont loguées ici -->
+    <div class="separator"></div>
+    <div class="section-title">Journal d'exécution</div>
+    <!-- JavaScript remplit cet élément avec les messages de log -->
+    <div id="log"></div>
+
+  </div><!-- fin tab-main -->
+
+
+  <!-- ============================================================
+       ONGLET 2 : CRYPTOGRAPHIE CLASSIQUE
+       Démonstration interactive de César et Vigenère.
+       ============================================================ -->
+  <div id="tab-classic" class="tab-content">
+    <div class="section-title">Cryptographie Classique</div>
+    <p class="section-sub">Module 1 — Chiffrement de César et de Vigenère · Pédagogique mais vulnérable</p>
+
+    <div class="two-col">
+
+      <!-- ====== Chiffrement de César ====== -->
+      <div class="panel">
+        <div class="panel-title neutral-title">Chiffrement de César</div>
+
+        <!-- Zone de saisie du texte à chiffrer -->
+        <div class="field">
+          <label>Texte à chiffrer</label>
+          <!-- oninput="updateCesar()" : appelle la fonction à chaque frappe -->
+          <textarea id="cesar-input" rows="3" oninput="updateCesar()">Bonjour Koffi message secret</textarea>
+        </div>
+
+        <!-- Curseur pour choisir le décalage (1 à 25) -->
+        <div class="shift-control">
+          <label style="margin:0;white-space:nowrap">Décalage :</label>
+          <input type="range" min="1" max="25" value="3" id="cesar-shift" oninput="updateCesar()">
+          <!-- Affiche la valeur actuelle du curseur (mis à jour par JS) -->
+          <span class="shift-val" id="cesar-shift-val">3</span>
+        </div>
+
+        <!-- Résultat du chiffrement (rempli par JavaScript) -->
+        <div class="field">
+          <label>Texte chiffré</label>
+          <div class="code-block" id="cesar-out"></div>
+        </div>
+
+        <!-- Vérification : déchiffrement du texte chiffré -->
+        <div class="field">
+          <label>Déchiffré</label>
+          <div class="code-block" id="cesar-dec" style="color:var(--success)"></div>
+        </div>
+
+        <!-- Avertissement sur la vulnérabilité de César -->
+        <div class="status-line status-warn">
+          ⚠ Vulnérable : 25 combinaisons seulement → attaque par force brute en &lt;1 seconde
+        </div>
+
+        <!-- Démonstration de l'attaque par force brute -->
+        <div style="margin-top:20px">
+          <label>Analyse par fréquence (26 décalages)</label>
+          <!-- JavaScript remplit ce div avec les 25 tentatives de déchiffrement -->
+          <div id="brute-force" style="font-size:0.6rem;max-height:150px;overflow-y:auto;background:var(--bg);border:1px solid var(--border);padding:8px;line-height:2;"></div>
+        </div>
+      </div>
+
+      <!-- ====== Chiffrement de Vigenère ====== -->
+      <div class="panel">
+        <div class="panel-title neutral-title">Chiffrement de Vigenère</div>
+
+        <!-- Zone de saisie du texte -->
+        <div class="field">
+          <label>Texte à chiffrer</label>
+          <textarea id="vig-input" rows="3" oninput="updateVigenere()">Bonjour Koffi message secret</textarea>
+        </div>
+
+        <!-- Champ pour le mot-clé de Vigenère -->
+        <div class="field">
+          <label>Mot-clé</label>
+          <input type="text" id="vig-key" value="KOFFI" oninput="updateVigenere()" />
+        </div>
+
+        <!-- Résultat chiffré -->
+        <div class="field">
+          <label>Texte chiffré</label>
+          <div class="code-block" id="vig-out"></div>
+        </div>
+
+        <!-- Vérification déchiffrée -->
+        <div class="field">
+          <label>Déchiffré</label>
+          <div class="code-block" id="vig-dec" style="color:var(--success)"></div>
+        </div>
+
+        <!-- Avertissement Vigenère -->
+        <div class="status-line status-warn">
+          ⚠ Vulnérable à l'analyse de Kasiski si le texte est suffisamment long
+        </div>
+
+        <div class="separator"></div>
+
+        <!-- Tableau comparatif des 3 méthodes -->
+        <div style="background:var(--bg);border:1px solid var(--border);padding:16px;">
+          <div style="font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:600;margin-bottom:12px;color:var(--accent3)">Comparaison : César vs Vigenère vs AES</div>
+          <table>
+            <tr><th>Critère</th><th>César</th><th>Vigenère</th><th>AES-256</th></tr>
+            <tr>
+              <td>Espace de clé</td>
+              <td class="td-bad">25</td>       <!-- seulement 25 possibilités ! -->
+              <td class="td-med">26^n</td>     <!-- dépend de la longueur du mot-clé -->
+              <td class="td-good">2^256</td>   <!-- nombre astronomique de possibilités -->
+            </tr>
+            <tr>
+              <td>Résistance BF</td>            <!-- BF = Brute Force (force brute) -->
+              <td class="td-bad">Nulle</td>
+              <td class="td-bad">Faible</td>
+              <td class="td-good">Excellente</td>
+            </tr>
+            <tr>
+              <td>Utilisation actuelle</td>
+              <td class="td-bad">Non</td>
+              <td class="td-bad">Non</td>
+              <td class="td-good">Oui</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- fin two-col classique -->
+  </div><!-- fin tab-classic -->
+
+
+  <!-- ============================================================
+       ONGLET 3 : ANALYSE & PERFORMANCES
+       Statistiques, benchmark et tableaux comparatifs.
+       ============================================================ -->
+  <div id="tab-compare" class="tab-content">
+    <div class="section-title">Analyse &amp; Performances</div>
+    <p class="section-sub">Module 4 — Benchmarks, comparaison AES vs RSA, résultats des tests de sécurité</p>
+
+    <!-- Cartes de statistiques (mises à jour par JavaScript) -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-val" style="color:var(--success)" id="stat-sent">0</div>
+        <div class="stat-label">Messages envoyés</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color:var(--success)" id="stat-ok">0</div>
+        <div class="stat-label">Vérifications OK</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color:var(--danger)" id="stat-fail">0</div>
+        <div class="stat-label">Attaques détectées</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+
+      <!-- Benchmark de performance -->
+      <div class="panel">
+        <div class="panel-title neutral-title">Benchmark de chiffrement</div>
+        <!-- Clique → lance runBenchmark() dans script.js -->
+        <button class="btn btn-primary" onclick="runBenchmark()" id="btn-bench">▶ Lancer le benchmark</button>
+        <!-- JavaScript injectera les résultats ici -->
+        <div id="bench-result" style="margin-top:16px"></div>
+      </div>
+
+      <!-- Tableau comparatif AES vs RSA -->
+      <div class="panel">
+        <div class="panel-title neutral-title">Comparaison AES vs RSA</div>
+        <table>
+          <tr><th>Critère</th><th>AES-256</th><th>RSA-2048</th></tr>
+          <tr><td>Type</td><td>Symétrique</td><td>Asymétrique</td></tr>
+          <tr><td>Vitesse</td><td class="td-good">Très rapide</td><td class="td-bad">Lent</td></tr>
+          <tr><td>Taille clé</td><td>256 bits</td><td>2048 bits</td></tr>
+          <tr><td>Échange de clé</td><td class="td-bad">Problématique</td><td class="td-good">Natif</td></tr>
+          <tr><td>Usage recommandé</td><td>Données volumineuses</td><td>Clés, signatures</td></tr>
+          <tr><td>Sécurité</td><td class="td-good">Excellente</td><td class="td-good">Excellente</td></tr>
+        </table>
+        <div class="status-line status-info" style="margin-top:16px">
+          ✓ Combinaison optimale : AES pour le message + RSA pour la clé AES
+        </div>
+      </div>
+
+    </div>
+
+    <div class="separator"></div>
+
+    <!-- Tableau de sécurité complet -->
+    <div class="panel">
+      <div class="panel-title neutral-title">Tableau de sécurité des propriétés</div>
+      <table>
+        <tr>
+          <th>Propriété</th>
+          <th>Technique</th>
+          <th>Algorithme</th>
+          <th>Garantie</th>
+          <th>Vulnérabilité potentielle</th>
+        </tr>
+        <tr>
+          <td>Confidentialité</td>
+          <td>Chiffrement symétrique</td>
+          <td>AES-256 CBC</td>
+          <td class="td-good">✓ Assurée</td>
+          <td class="td-med">Partage de clé non sécurisé</td>
+        </tr>
+        <tr>
+          <td>Intégrité</td>
+          <td>Hachage cryptographique</td>
+          <td>SHA-256</td>
+          <td class="td-good">✓ Assurée</td>
+          <td class="td-bad">Attaque de collision (théorique)</td>
+        </tr>
+        <tr>
+          <td>Authentification</td>
+          <td>Signature numérique</td>
+          <td>RSA + SHA-256</td>
+          <td class="td-good">✓ Assurée</td>
+          <td class="td-med">Compromission clé privée</td>
+        </tr>
+        <tr>
+          <td>Non-répudiation</td>
+          <td>Signature irréversible</td>
+          <td>RSA-2048</td>
+          <td class="td-good">✓ Assurée</td>
+          <td class="td-med">Clé privée volée</td>
+        </tr>
+        <tr>
+          <td>César / Vigenère</td>
+          <td>Substitution classique</td>
+          <td>—</td>
+          <td class="td-bad">✗ Insuffisante</td>
+          <td class="td-bad">Force brute / Kasiski</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="separator"></div>
+
+    <!-- Chronologie des événements (remplie par JavaScript) -->
+    <div class="panel">
+      <div class="panel-title neutral-title">Chronologie des événements</div>
+      <div class="timeline" id="event-timeline">
+        <div style="color:var(--dim);font-size:0.75rem;">Aucun événement. Lancez une simulation depuis l'onglet principal.</div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ============================================================
+       ONGLET 4 : À PROPOS DU PROJET
+       Résumé des objectifs et de l'architecture du système.
+       ============================================================ -->
+  <div id="tab-about" class="tab-content">
+    <div class="section-title">À propos du projet</div>
+    <p class="section-sub">Conception et évaluation d'un système sécurisé de communication numérique</p>
+
+    <div class="two-col">
+
+      <!-- Tableau des objectifs de sécurité -->
+      <div class="panel">
+        <div class="panel-title neutral-title">Objectifs de sécurité</div>
+        <table>
+          <tr><th>Objectif</th><th>Technique</th><th>Module</th></tr>
+          <tr><td> Confidentialité</td><td>AES-256</td><td>Module 2</td></tr>
+          <tr><td> Intégrité</td><td>SHA-256</td><td>Module 3</td></tr>
+          <tr><td> Authentification</td><td>Signature RSA</td><td>Module 3</td></tr>
+          <tr><td> Non-répudiation</td><td>Signature numérique</td><td>Module 3</td></tr>
+          <tr><td> Cryptographie classique</td><td>César / Vigenère</td><td>Module 1</td></tr>
+        </table>
+      </div>
+
+      <!-- Explication de la structure du système -->
+      <div class="panel">
+        <div class="panel-title neutral-title">Structure du système</div>
+        <div style="font-size:0.75rem;line-height:2;">
+          <!-- Côté Adjoua -->
+          <div style="color:var(--adjoua);font-family:'Syne',sans-serif;font-weight:600;margin-bottom:8px">ADJOUA (Expéditrice)</div>
+          <div>1. Rédige le message</div>
+          <div>2. Calcule le hash SHA-256</div>
+          <div>3. Signe avec sa clé privée RSA</div>
+          <div>4. Chiffre le message avec AES-256</div>
+          <div>5. Chiffre la clé AES avec RSA (clé publique Koffi)</div>
+          <div>6. Transmet le paquet sécurisé</div>
+          <div style="height:16px"></div>
+          <!-- Côté Koffi -->
+          <div style="color:var(--koffi);font-family:'Syne',sans-serif;font-weight:600;margin-bottom:8px">KOFFI (Destinataire)</div>
+          <div>1. Déchiffre la clé AES (RSA, clé privée)</div>
+          <div>2. Déchiffre le message (AES)</div>
+          <div>3. Vérifie la signature (clé publique Adjoua)</div>
+          <div>4. Compare les hash SHA-256</div>
+          <div>5. Valide et lit le message</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="separator"></div>
+
+    <!-- Conclusion générale du projet -->
+    <div class="panel">
+      <div class="panel-title neutral-title">Conclusion générale</div>
+      <div style="font-size:0.8rem;line-height:2;color:var(--text);">
+        <p style="margin-bottom:12px">
+          Ce projet démontre concrètement comment sécuriser une communication numérique en combinant
+          <strong style="color:var(--accent)">chiffrement</strong>,
+          <strong style="color:var(--accent3)">hachage</strong> et
+          <strong style="color:var(--accent2)">signature numérique</strong>.
+        </p>
+        <p style="margin-bottom:12px">
+          La cryptographie classique (César, Vigenère) est utile à titre pédagogique pour comprendre
+          les principes de base du chiffrement, mais elle est
+          <strong style="color:var(--danger)">vulnérable</strong> aux attaques modernes.
+        </p>
+        <p>
+          Les systèmes actuels utilisent une
+          <strong style="color:var(--success)">combinaison d'algorithmes</strong> :
+          AES pour la rapidité du chiffrement symétrique, RSA pour l'échange de clé et la signature,
+          et SHA-256 pour l'intégrité des données.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
